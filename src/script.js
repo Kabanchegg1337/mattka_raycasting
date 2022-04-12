@@ -45,6 +45,7 @@ export default class Experience {
         this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setClearColor(0x000000);
+        this.renderer.outputEncoding = THREE.sRGBEncoding
         
         this.canvas = document.body.appendChild( this.renderer.domElement );
         this.height = this.canvas.offsetHeight;
