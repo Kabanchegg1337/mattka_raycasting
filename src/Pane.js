@@ -22,14 +22,14 @@ export default class Pane {
 
     resize(){
         this.aspect();
-        if (window.innerWidth / window.innerHeight > 1) {
-            this.mesh.scale.x = window.innerWidth / window.innerHeight;
+        /* if (window.innerWidth / window.innerHeight > 1) {
+            this.mesh.scale.x = this.camera.aspect;
             this.mesh.scale.y = 1;
         }
         else {
-            this.mesh.scale.y = window.innerWidth / window.innerHeight
+            this.mesh.scale.y = this.camera.aspect
             this.mesh.scale.x = 1;
-        }
+        } */
     }
     
     aspect() {

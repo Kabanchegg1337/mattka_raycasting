@@ -60,8 +60,8 @@ export default class Experience {
     resize(){
         window.addEventListener('resize', () => {
             this.renderer.setSize( window.innerWidth, window.innerHeight );
-            this.height = this.canvas.offsetHeight;
-            this.width = this.canvas.offsetWidth;
+            this.height = window.innerHeight;
+            this.width = window.innerWidth;
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             if (this.pane) this.pane.resize();
