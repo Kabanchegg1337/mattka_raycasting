@@ -4,7 +4,7 @@ uniform vec4 resolution;
 uniform float time;
 
 float sphere(vec3 p){
-    return length(p) - 2.;
+    return length(p) - (1.5 - sin(time) * 0.3);
 }
 
 float sineCrazy(vec3 p) {
@@ -12,22 +12,17 @@ float sineCrazy(vec3 p) {
 }
 
 float scene(vec3 p) {
-
     float scale = 5. + 4.*sin(time);
-
     float angle = time * 0.5;
     float co = cos(angle);
     float si = sin(angle);
-
     mat2 rotationMatrix = mat2( co, si,
                                	-si,  co);
-
     vec2 p1 = rotationMatrix * p.xz;
 
     p = vec3(p1.x, p.y, p1.y);
 
     return max(sphere(p), sineCrazy( 0.85 - (p * scale)) / scale);
-    /* return sphere(p); */
 }
 
 
@@ -56,7 +51,7 @@ void main(){
         rayLength += curDist; //Ray length
 
         if (curDist < 0.0001 || rayLength > 80.0) break;
-        color += 0.07 * getColor(rayPos); //Brightness * color
+        color += 0.12 * getColor(rayPos); //Brightness * color
     }
 
     gl_FragColor = vec4(color, 1.);
