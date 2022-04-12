@@ -33,10 +33,32 @@ export default class Sketch {
         this.aspect();
         this.render();
         this.mouseEvents();
+        this.resize();
+    }
+
+    resize(){
+        window.addEventListener('resize', () => {
+            this.height = window.innerHeight;
+            this.width = window.innerWidth;
+            this.aspect();
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+            if (window.innerWidth / window.innerHeight > 1) {
+                this.mesh.scale.x = window.innerWidth / window.innerHeight;
+                this.mesh.scale.y = 1;
+            }
+            else {
+                this.mesh.scale.y = window.innerWidth / window.innerHeight
+                this.mesh.scale.x = 1;
+            }
+        })
     }
 
     setRenderer(){
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+        this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setClearColor(0x000000);
         
@@ -56,8 +78,8 @@ export default class Sketch {
         this.imageAspect = 1;
         let a1; let a2;
         if (this.height / this.width > this.imageAspect) {
-            a1 = (this.width/this.height) * this.imageAspect;
-            a2 = 1;
+            a2 = (this.width/this.height) * this.imageAspect;
+            a1 = 1;
         }
         else {
             a1 = 1;
