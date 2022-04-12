@@ -3,12 +3,27 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 import vertex from "./shaders/vertexShader.glsl";
-import fragment from "./shaders/test2.glsl";
+import fragment from "./shaders/fragment.glsl";
 
 export default class Sketch {
     constructor() {
         this.time = 0;
-       
+        this.lastTime = 0;
+
+        this.parallax = {
+            position: {
+                target: {
+                    x: 0,
+                    y: 0,
+                },
+                eased: {
+                    x: 0,
+                    y: 0,
+                    multiplier: 2,
+                }
+            }
+        };
+        
         this.setRenderer();
         this.setCamera();
 	    this.scene = new THREE.Scene();
@@ -17,6 +32,7 @@ export default class Sketch {
         this.setMesh();
         this.aspect();
         this.render();
+        this.mouseEvents();
     }
 
     setRenderer(){
@@ -36,7 +52,6 @@ export default class Sketch {
         this.camera.fov = 2*(180 / Math.PI)*Math.atan(height/(2 * dist))
         this.controls = new OrbitControls(this.camera, this.canvas);
     }
-    
     aspect() {
         this.imageAspect = 1;
         let a1; let a2;
@@ -53,7 +68,6 @@ export default class Sketch {
         this.material.uniforms.resolution.value.z = a1;
         this.material.uniforms.resolution.value.w = a2;
     }
-
     setGeometry(){
         this.geometry = new THREE.PlaneBufferGeometry(1, 1, 10, 10);
     }
@@ -65,6 +79,7 @@ export default class Sketch {
                 time: {type: "f", value: 0.},
                 progress: {type: "f", value: 0.},
                 resolution: {value: new THREE.Vector4()},
+                uMouse: {value: new THREE.Vector2(0, 0)}
             },
             vertexShader: vertex,
             fragmentShader: fragment,
@@ -86,12 +101,26 @@ export default class Sketch {
 
         this.scene.add( this.mesh );
     }
-
     render(){
         this.time += 0.01;
-	    this.renderer.render( this.scene, this.camera );
+
+        const deltaTime = this.time - this.lastTime;
+        this.lastTime = this.time;
+
+        this.parallax.position.eased.x += (this.parallax.position.target.x - this.parallax.position.eased.x) * deltaTime * this.parallax.position.eased.multiplier;
+        this.parallax.position.eased.y += (this.parallax.position.target.y - this.parallax.position.eased.y) * deltaTime * this.parallax.position.eased.multiplier;
+	    this.material.uniforms.uMouse.value = new THREE.Vector2(this.parallax.position.eased.x, this.parallax.position.eased.y)
+        this.renderer.render( this.scene, this.camera );
         this.material.uniforms.time.value = this.time;
         window.requestAnimationFrame(this.render.bind(this));
+    }
+    mouseEvents(){
+        document.addEventListener('mousemove', (e) => {
+            const cx = (e.clientX / this.width) - 0.5;
+            const cy = (e.clientY / this.height) - 0.5;
+            this.parallax.position.target.x = cx;
+            this.parallax.position.target.y = cy;
+        })
     }
 }
 
